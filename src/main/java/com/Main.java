@@ -1,39 +1,27 @@
 package com;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.applet.Applet;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
-import java.awt.event.*;
-import java.sql.SQLOutput;
 import java.util.Arrays;
 
-class Main {
+class RecognizeCards {
     public static void main(String[] args) throws IOException {
-        String path = "src/main/resources/imgs_marked/";
-        File folder = new File(path);
-        Main main = new Main();
+        File folder = new File(args[0]);
+        RecognizeCards main = new RecognizeCards();
         BufferedImage img;
+        int[] rowPixels = new int[]{1,7,16,21,23};
 
         for (final File fileEntry : folder.listFiles()) {
-            System.out.println("result: - " + fileEntry.getPath());
-//            if(fileEntry.getPath().equals("src\\main\\resources\\imgs_marked\\10dJh7c.png")){
-                img = ImageIO.read(fileEntry);
-                main.cutCards(img);
-//            }
+            System.out.print(fileEntry.getName());
+            img = ImageIO.read(fileEntry);
+            String result = main.cutCards(img, rowPixels);
+            System.out.println(" - " + result);
         }
     }
 
-    public void cutCards(BufferedImage img) {
-        int y1 = 1;
-        int y2 = 7;
-        int y3 = 16;
-        int y4 = 21;
-        int y5 = 23;
+    public String cutCards(BufferedImage img, int[] yArr) {
         int[] results;
         String result = "";
 
@@ -42,7 +30,7 @@ class Main {
         int w = 340;
         int h = 80;
         img = img.getSubimage(x, y, w, h);
-        results = countPixels(img, y1, y2, y3, y4, y5);
+        results = countPixels(img, yArr[0], yArr[1], yArr[2], yArr[3], yArr[4]);
         result += getCardsNumber(results, img);
 
         x = 69;
@@ -50,7 +38,7 @@ class Main {
         w = 270;
         h = 80;
         img = img.getSubimage(x, y, w, h);
-        results = countPixels(img, y1, y2, y3, y4, y5);
+        results = countPixels(img, yArr[0], yArr[1], yArr[2], yArr[3], yArr[4]);
         result += getCardsNumber(results, img);
 
         x = 70;
@@ -58,7 +46,7 @@ class Main {
         w = 200;
         h = 80;
         img = img.getSubimage(x, y, w, h);
-        results = countPixels(img, y1, y2, y3, y4, y5);
+        results = countPixels(img, yArr[0], yArr[1], yArr[2], yArr[3], yArr[4]);
         result += getCardsNumber(results, img);
 
         x = 70;
@@ -66,7 +54,7 @@ class Main {
         w = 130;
         h = 80;
         img = img.getSubimage(x, y, w, h);
-        results = countPixels(img, y1, y2, y3, y4, y5);
+        results = countPixels(img, yArr[0], yArr[1], yArr[2], yArr[3], yArr[4]);
         result += getCardsNumber(results, img);
 
         x = 72;
@@ -74,10 +62,9 @@ class Main {
         w = 58;
         h = 80;
         img = img.getSubimage(x, y, w, h);
-        results = countPixels(img, y1, y2, y3, y4, y5);
+        results = countPixels(img, yArr[0], yArr[1], yArr[2], yArr[3], yArr[4]);
         result += getCardsNumber(results, img);
-
-        System.out.println(" - " + result);
+        return result;
     }
 
     private int[] countPixels(BufferedImage img, int y1, int y2, int y3, int y4, int y5) {
@@ -133,7 +120,6 @@ class Main {
     }
 
     private String getCardsNumber(int[] results, BufferedImage img1) {
-        System.out.println(" results - " + results[0] + " " + results[1] + " " + results[2] + " " + results[3] + " " + results[4]);
         String result = "";
         Color c = new Color(img1.getRGB(27, 12));
         int red = c.getRed();
@@ -209,14 +195,12 @@ class Main {
         int red;
         int green;
         int blue;
-        int y1 = 48;
-        int y2 = 54;
-
         int count1 = 0;
         int count2 = 0;
-        Color c;
+        int x = 35;
+        int y = 60;
 
-        c = new Color(img.getRGB(35, 60));
+        Color c = new Color(img.getRGB(x, y));
         red = c.getRed();
         green = c.getGreen();
         blue = c.getBlue();
@@ -224,15 +208,17 @@ class Main {
             isBlack = true;
         }
 
-        for (int x = 17; x < 50; x++) {
-            if (isRGBPixels(img, x, y1)) {
+        int y1 = 48;
+        int y2 = 54;
+        for (int x1 = 17; x1 < 50; x1++) {
+            if (isRGBPixels(img, x1, y1)) {
                 count1++;
             }
-            if (isRGBPixels(img, x, y2)) {
+            if (isRGBPixels(img, x1, y2)) {
                 count2++;
             }
         }
-        System.out.println("Count 1 - " + count1 + ", " + "Count 2 - " + count2);
+
         if (isBlack) {
             if (count1 >= 14 && count2 <= 22) {
                 return "c";
