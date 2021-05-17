@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.awt.event.*;
+import java.sql.SQLOutput;
 import java.util.Arrays;
 
 class Main {
@@ -20,8 +21,10 @@ class Main {
 
         for (final File fileEntry : folder.listFiles()) {
             System.out.println("result: - " + fileEntry.getPath());
-            img = ImageIO.read(fileEntry);
-            main.cutCards(img);
+//            if(fileEntry.getPath().equals("src\\main\\resources\\imgs_marked\\10dJh7c.png")){
+                img = ImageIO.read(fileEntry);
+                main.cutCards(img);
+//            }
         }
     }
 
@@ -100,7 +103,7 @@ class Main {
             }
         }
 
-        if (count6 < 10) {
+        if (count6 < 5) {
             return results;
         }
 
@@ -138,7 +141,7 @@ class Main {
         int blue = c.getBlue();
 
         if (Arrays.stream(results).sum() != 0) {
-            if ((results[0] > 14 && results[0] < 20 && results[1] > 14 && results[1] < 17) &&
+            if ((results[0] > 14 && results[0] <= 21 && results[1] > 13 && results[1] <= 17) &&
                     ((red != 255 && green != 255 && blue != 255) || (red != 120 && green != 120 && blue != 120))) {
                 result += "10";
                 result += getCardsSuit(img1);
@@ -148,7 +151,7 @@ class Main {
             if ((results[0] == 15 || results[0] == 14) && results[1] < 8 && results[2] < 8 && results[3] > 8 && results[3] <= 14 && results[4] <= 8) {
                 result += "5";
                 result += getCardsSuit(img1);
-            } else if (results[0] == 17 || results[0] == 16) {
+            } else if (results[0] > 15 && results[0] < 20) {
                 if (results[1] < 8 && results[3] < 8 && results[4] < 8) {
                     result += "7";
                     result += getCardsSuit(img1);
@@ -157,7 +160,7 @@ class Main {
                     result += getCardsSuit(img1);
                 }
             }
-            if (results[0] >= 9 && results[1] < 9 && results[2] < 9 && results[4] >= 16) {
+            if (results[0] >= 9 && results[1] < 9 && results[2] < 10 && results[4] >= 16) {
                 result += "2";
                 result += getCardsSuit(img1);
             }
@@ -169,7 +172,7 @@ class Main {
                 result += "4";
                 result += getCardsSuit(img1);
             }
-            if (results[0] < 7 && results[2] > 17 && results[3] > 7) {
+            if (results[0] <= 8 && results[2] >= 10 && results[3] > 6) {
                 result += "A";
                 result += getCardsSuit(img1);
             }
@@ -186,12 +189,12 @@ class Main {
                 result += "8";
                 result += getCardsSuit(img1);
             }
-            if (results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] <= 12 && results[2] > 12 && results[3] > 16) {
+            if (results[0] >= 9 && results[0] <= 13 && results[1] >= 9 && results[1] <= 14 && results[2] > 12 && results[3] > 16) {
                 result += "Q";
                 result += getCardsSuit(img1);
             }
-            if (results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
-                    results[2] >= 11 && results[3] >= 9 && results[3] <= 12 && results[4] >= 9 && results[4] < 12) {
+            if (results[0] >= 9 && results[0] <= 12 && results[1] >= 9 && results[1] <= 13 &&
+                    results[2] >= 10 && results[3] >= 9 && results[3] <= 12 && results[4] >= 9 && results[4] < 12) {
                 result += "K";
                 result += getCardsSuit(img1);
             }
@@ -229,15 +232,15 @@ class Main {
                 count2++;
             }
         }
-
+        System.out.println("Count 1 - " + count1 + ", " + "Count 2 - " + count2);
         if (isBlack) {
-            if (count1 >= 14 && count2 <= 20) {
+            if (count1 >= 14 && count2 <= 22) {
                 return "c";
-            } else if (count1 <= 11 && count2 >= 23) {
+            } else if (count1 <= 11 && count2 >= 22) {
                 return "s";
             }
         } else {
-            if (count1 <= 13 && count2 >= 26) {
+            if (count1 <= 14 && count2 >= 26) {
                 return "h";
             } else if (count1 >= 3 && count2 <= 27) {
                 return "d";
