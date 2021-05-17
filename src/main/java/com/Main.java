@@ -9,349 +9,253 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.awt.event.*;
+import java.util.Arrays;
 
-class Main extends Component {
-    String path = "src/main/resources/imgs_marked/" +
-//            "6h4h9sQc.png";
-//            "3d4h5s.png";
-//    "3c7c2d.png";
-//    "6h4h9sQc.png";
-//    "2s9sQs.png";
-    "6sJsKh.png";
-//    "5sQs8h.png";
-//    "Ac4cJc.png";
-//    "6s3d10c.png";
-//    "8h3sKd.png";
-    File dir = new File(path);
-    BufferedImage img;
+class Main {
+    public static void main(String[] args) throws IOException {
+        String path = "src/main/resources/imgs_marked/";
+        File folder = new File(path);
+        Main main = new Main();
+        BufferedImage img;
 
-
-    public Main(){
-        try {
-            img = ImageIO.read(dir);
-        } catch (IOException e) { }
-    }
-
-    public void paint(Graphics g) {
-        long before = System.nanoTime();
-        int x = 151;                            // 143 x – the X coordinate of the upper-left corner of the specified rectangular region
-        int y = 591;                            // 585 y – the Y coordinate of the upper-left corner of the specified rectangular region
-        int w = 340;                            // w – the width of the specified rectangular region
-        int h = 80;                             // h – the height of the specified rectangular region
-        int y1 = 1;
-        int y2 = 7;   // 3 (10-13)
-        int y3 = 16;  // 4 (14-17)
-        int y4 = 21;  //
-        int y5 = 23;  // 2 (23)         23@ taki gitsn e
-        int[] results;
-        String result = "";
-        img = img.getSubimage(x,y,w,h);         // vzyat oblasti v kartinke
-        results = countElement1(img, y1, y2, y3, y4, y5);
-        result += getCardsNumber(results);
-        g.drawImage(img, 0, 0, null);
-
-        x = 69;y = 0;w = 270;h = 80;
-        img = img.getSubimage(x,y,w,h);
-        results = countElement1(img, y1, y2, y3, y4, y5);
-        result += getCardsNumber(results);
-
-        x = 70;y = 0;w = 200;h = 80;
-        img = img.getSubimage(x,y,w,h);
-        results = countElement1(img, y1, y2, y3, y4, y5);
-        result += getCardsNumber(results);
-
-        x = 70;y = 0;w = 130;h = 80;
-        img = img.getSubimage(x,y,w,h);
-        results = countElement1(img, y1, y2, y3, y4, y5);
-        result += getCardsNumber(results);
-
-        x = 72;y = 0;w = 58;h = 80;
-        img = img.getSubimage(x,y,w,h);
-        results = countElement1(img, y1, y2, y3, y4, y5);
-        result += getCardsNumber(results);
-
-        long after = System.nanoTime();
-        System.out.println("Time: - " + (double)(after - before)/ 1_000_000_000);
-        System.out.println("result: - " + result);
-    }
-
-    public Dimension getPreferredSize() {
-        if (img == null) {
-            return new Dimension(100,100);
-        } else {
-            return new Dimension(img.getWidth(null), img.getHeight(null));
+        for (final File fileEntry : folder.listFiles()) {
+            System.out.println("result: - " + fileEntry.getPath());
+            img = ImageIO.read(fileEntry);
+            main.cutCards(img);
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public void cutCards(BufferedImage img) {
+        int y1 = 1;
+        int y2 = 7;
+        int y3 = 16;
+        int y4 = 21;
+        int y5 = 23;
+        int[] results;
+        String result = "";
 
-        JFrame f = new JFrame("Load Image Sample");
+        int x = 151;
+        int y = 591;
+        int w = 340;
+        int h = 80;
+        img = img.getSubimage(x, y, w, h);
+        results = countPixels(img, y1, y2, y3, y4, y5);
+        result += getCardsNumber(results, img);
 
-        f.addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+        x = 69;
+        y = 0;
+        w = 270;
+        h = 80;
+        img = img.getSubimage(x, y, w, h);
+        results = countPixels(img, y1, y2, y3, y4, y5);
+        result += getCardsNumber(results, img);
 
-        f.add(new Main());
-        f.pack();
-        f.setVisible(true);
+        x = 70;
+        y = 0;
+        w = 200;
+        h = 80;
+        img = img.getSubimage(x, y, w, h);
+        results = countPixels(img, y1, y2, y3, y4, y5);
+        result += getCardsNumber(results, img);
+
+        x = 70;
+        y = 0;
+        w = 130;
+        h = 80;
+        img = img.getSubimage(x, y, w, h);
+        results = countPixels(img, y1, y2, y3, y4, y5);
+        result += getCardsNumber(results, img);
+
+        x = 72;
+        y = 0;
+        w = 58;
+        h = 80;
+        img = img.getSubimage(x, y, w, h);
+        results = countPixels(img, y1, y2, y3, y4, y5);
+        result += getCardsNumber(results, img);
+
+        System.out.println(" - " + result);
     }
 
-
-    private int[] countElement1(BufferedImage img, int y1, int y2, int y3, int y4, int y5){
-        int red;
-        int green;
-        int blue;
+    private int[] countPixels(BufferedImage img, int y1, int y2, int y3, int y4, int y5) {
         int count1 = 0;
         int count2 = 0;
         int count3 = 0;
         int count4 = 0;
         int count5 = 0;
-        int[] result = new int[5];
+        int count6 = 0;
+        int[] results = new int[5];
+
         Color c;
+        int red;
+        int green;
+        int blue;
+        for (int x = 0; x < 10; x++) {
+            c = new Color(img.getRGB(x, 25));
+            red = c.getRed();
+            green = c.getGreen();
+            blue = c.getBlue();
+            if ((red == 255 && green == 255 && blue == 255) || (red == 120 && green == 120 && blue == 120)) {
+                count6++;
+            }
+        }
+
+        if (count6 < 10) {
+            return results;
+        }
+
         for (int x1 = 0; x1 < 30; x1++) {
-            c = new Color(img.getRGB(x1, y1));
-            red = c.getRed();
-            green = c.getGreen();
-            blue = c.getBlue();
-            if( !( (red == 255 && green == 255 && blue == 255) ||
-                    (red == 120 && green == 120 && blue == 120) )
-            ){ count1++; }
-//          ------------------------------------------------------------------
-            c = new Color(img.getRGB(x1, y2));
-            red = c.getRed();
-            green = c.getGreen();
-            blue = c.getBlue();
-
-            if( !( (red == 255 && green == 255 && blue == 255) ||
-                    (red == 120 && green == 120 && blue == 120) )
-            ){ count2++; }
-
-            c = new Color(img.getRGB(x1, y3));
-            red = c.getRed();
-            green = c.getGreen();
-            blue = c.getBlue();
-
-            if( !( (red == 255 && green == 255 && blue == 255) ||
-                    (red == 120 && green == 120 && blue == 120) )
-            ){ count3++; }
-
-            c = new Color(img.getRGB(x1, y4));
-            red = c.getRed();
-            green = c.getGreen();
-            blue = c.getBlue();
-
-            if( !( (red == 255 && green == 255 && blue == 255) ||
-                    (red == 120 && green == 120 && blue == 120) )
-            ){ count4++; }
-
-            c = new Color(img.getRGB(x1, y5));
-            red = c.getRed();
-            green = c.getGreen();
-            blue = c.getBlue();
-
-            if( !( (red == 255 && green == 255 && blue == 255) ||
-                    (red == 120 && green == 120 && blue == 120) )
-            ){ count5++; }
+            if (isRGBPixels(img, x1, y1)) {
+                count1++;
+            }
+            if (isRGBPixels(img, x1, y2)) {
+                count2++;
+            }
+            if (isRGBPixels(img, x1, y3)) {
+                count3++;
+            }
+            if (isRGBPixels(img, x1, y4)) {
+                count4++;
+            }
+            if (isRGBPixels(img, x1, y5)) {
+                count5++;
+            }
         }
-        result[0] = count1;
-        result[1] = count2;
-        result[2] = count3;
-        result[3] = count4;
-        result[4] = count5;
-        System.out.println(count1 + " - " + count2 + " - " + count3 + " - " + count4 + " - " + count5 );
-        return result;
+        results[0] = count1;
+        results[1] = count2;
+        results[2] = count3;
+        results[3] = count4;
+        results[4] = count5;
+        return results;
     }
-    private String getCardsNumber(int[] results){
+
+    private String getCardsNumber(int[] results, BufferedImage img1) {
+        System.out.println(" results - " + results[0] + " " + results[1] + " " + results[2] + " " + results[3] + " " + results[4]);
         String result = "";
-        if((results[0] == 15 || results[0] == 14) && results[1] < 8 && results[2] < 8 && results[3] > 8 && results[3] < 14 && results[4] <= 8){
-            result += "5";
-        } else if(results[0] == 17 || results[0] == 16){
-            if(results[1] < 8 && results[3] < 8 && results[4] < 8 ){
-                result += "7";
-            } else if(results[3] > 8 && results[3] < 15){
-                result += "3";
+        Color c = new Color(img1.getRGB(27, 12));
+        int red = c.getRed();
+        int green = c.getGreen();
+        int blue = c.getBlue();
+
+        if (Arrays.stream(results).sum() != 0) {
+            if ((results[0] > 14 && results[0] < 20 && results[1] > 14 && results[1] < 17) &&
+                    ((red != 255 && green != 255 && blue != 255) || (red != 120 && green != 120 && blue != 120))) {
+                result += "10";
+                result += getCardsSuit(img1);
+                return result;
+            }
+
+            if ((results[0] == 15 || results[0] == 14) && results[1] < 8 && results[2] < 8 && results[3] > 8 && results[3] <= 14 && results[4] <= 8) {
+                result += "5";
+                result += getCardsSuit(img1);
+            } else if (results[0] == 17 || results[0] == 16) {
+                if (results[1] < 8 && results[3] < 8 && results[4] < 8) {
+                    result += "7";
+                    result += getCardsSuit(img1);
+                } else if (results[3] > 8 && results[3] < 15) {
+                    result += "3";
+                    result += getCardsSuit(img1);
+                }
+            }
+            if (results[0] >= 9 && results[1] < 9 && results[2] < 9 && results[4] >= 16) {
+                result += "2";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] < 8 && results[1] < 8 && results[2] < 8 && results[4] < 8) {
+                result += "J";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] < 7 && results[2] > 17 && results[3] < 7 && results[4] < 7) {
+                result += "4";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] < 7 && results[2] > 17 && results[3] > 7) {
+                result += "A";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] > 6 && results[0] < 11 && results[1] < 7 && results[3] > 10 && results[4] < 8) {
+                result += "6";
+                result += getCardsSuit(img1);
+            }
+            if (results[1] >= 9 && results[2] < 7 && results[4] < 8) {
+                result += "9";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
+                    results[2] >= 9 && results[2] <= 13 && results[3] >= 13 && results[3] < 17) {
+                result += "8";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] <= 12 && results[2] > 12 && results[3] > 16) {
+                result += "Q";
+                result += getCardsSuit(img1);
+            }
+            if (results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
+                    results[2] >= 11 && results[3] >= 9 && results[3] <= 12 && results[4] >= 9 && results[4] < 12) {
+                result += "K";
+                result += getCardsSuit(img1);
             }
         }
-        if(results[0] >=9 && results[1] < 9 && results[2] < 9 && results[4] > 16 ){
-            result += "2";
-        }
-        if(results[0] < 8 && results[1] < 8 && results[2] < 8 && results[4] < 8){
-            result += "J";
-        }
-        if(results[0] < 7 && results[2] > 17  && results[3] < 7 && results[4] < 7){
-            result += "4";
-        }
-        if(results[0] < 7 && results[2] > 17  && results[3] > 7){
-            result += "A";
-        }
-        if(results[0] < 11 && results[1] < 7 && results[3] > 10  && results[4] < 8){
-            result += "6";
-        }
-        if(results[1] >= 9 && results[2] < 7  && results[4] < 8){
-            result += "9";
-        }
-        if(results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
-                results[2] >= 9 && results[2] < 12 && results[3] >= 9 && results[3] < 17){
-            result += "8";
-        }
-        if(results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
-                results[2] >= 9 && results[2] < 12 && results[3] >= 9 && results[3] < 16){
-            result += "8";
-        }
-        if(results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] <= 12 &&
-                results[2] > 12 && results[3] > 16 ){
-            result += "Q";
-        }
-        if(results[0] >= 9 && results[0] < 12 && results[1] >= 9 && results[1] < 12 &&
-                results[2] >= 12 && results[3] >= 9 && results[3] < 12 && results[4] >= 9 && results[4] < 12){
-            result += "K";
-        }
+
         return result;
     }
-}
 
-/*
-♠️  - s
-♥️  - h
-♦️  - d
-♣️  - c
-T  - A
-2  -
-3  -
-4  -
-5  - 5
-6  -
-7  -
-8  - 8
-9  -
-10 -
-Q  - Q
-J  - J
-K  - K
+    private String getCardsSuit(BufferedImage img) {
+        String result = "";
+        boolean isBlack = false;
+        int red;
+        int green;
+        int blue;
+        int y1 = 48;
+        int y2 = 54;
 
-636
-1166
- */
-//      System.out.println(img.getRGB(x1, y1) + " - " + red + ", " + green + ", " + blue);
+        int count1 = 0;
+        int count2 = 0;
+        Color c;
 
-
-//      File dir = new File("src/main/resources/imgs_marked/2c3dAh.png");
-//      BufferedImage img;
-//      img = ImageIO.read(dir);
-//      System.out.println(img.getWidth());                 // razmer kartinki
-//      System.out.println(img.getHeight());                // razmer kartinki
-//      boolean png = ImageIO.write(img, "png", dir);       // zapis kartinku v file
-//      int x = 150;                                        // 143 x – the X coordinate of the upper-left corner of the specified rectangular region
-//      int y = 590;                                        // 585 y – the Y coordinate of the upper-left corner of the specified rectangular region
-//      int w = 360;                                        // w – the width of the specified rectangular region
-//      int h = 80;                                         // h – the height of the specified rectangular region
-//      img = img.getSubimage(x,y,w,h);                     // vzyat oblasti v kartinke
-//      g.drawImage(img, 0, 0, null);
-//      int x1 = 55;
-//      int y1 = 5;
-//      img.getRGB(x1,y1);                                  // vzyats cvet tochki po koordinate
-//      Color c = new Color(img.getRGB(x1,y1));             // rabota s cvetami tochki
-//      c.getRed();                                         // rabota s cvetami tochki
-//      c.getGreen();                                       // rabota s cvetami tochki
-//      c.getBlue();                                        // rabota s cvetami tochki
-//      // c.equals(c1);
-
-
-class Test {
-    // File representing the folder that you select using a FileChooser
-    static final File dir = new File("PATH_TO_YOUR_DIRECTORY");
-
-    // array of supported extensions (use a List if you prefer)
-    static final String[] EXTENSIONS = new String[]{"gif", "png", "bmp"  };// and other formats you need
-
-    // filter to identify images based on their extensions
-    static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
-
-        @Override
-        public boolean accept(final File dir, final String name) {
-            for (final String ext : EXTENSIONS) {
-                if (name.endsWith("." + ext)) {
-                    return (true);
-                }
-            }
-            return (false);
+        c = new Color(img.getRGB(35, 60));
+        red = c.getRed();
+        green = c.getGreen();
+        blue = c.getBlue();
+        if ((red == 35 && green == 35 && blue == 38) || (red == 16 && green == 16 && blue == 18)) {
+            isBlack = true;
         }
-    };
 
-    public static void main(String[] args) {
-
-        if (dir.isDirectory()) { // make sure it's a directory
-            for (final File f : dir.listFiles(IMAGE_FILTER)) {
-                BufferedImage img = null;
-
-                try {
-                    img = ImageIO.read(f);
-
-                    // you probably want something more involved here
-                    // to display in your UI
-                    System.out.println("image: " + f.getName());
-                    System.out.println(" width : " + img.getWidth());
-                    System.out.println(" height: " + img.getHeight());
-                    System.out.println(" size  : " + f.length());
-                } catch (final IOException e) {
-                    // handle errors here
-                }
+        for (int x = 17; x < 50; x++) {
+            if (isRGBPixels(img, x, y1)) {
+                count1++;
+            }
+            if (isRGBPixels(img, x, y2)) {
+                count2++;
             }
         }
-    }
-}
 
-
-class LoadImageApp extends Component {
-    private BufferedImage img;
-
-    public void paint(Graphics g) {
-        g.drawImage(img, 0, 0, null);
-    }
-
-    public LoadImageApp() {
-        try {
-            img = ImageIO.read(new File("src/main/resources/imgs_marked/2c3dAh.png"));
-//            img = ImageIO.read(new File("imgs_marked/2c3dAh.png"));
-        } catch (IOException e) { }
-    }
-
-    public Dimension getPreferredSize() {
-        if (img == null) {
-            return new Dimension(100,100);
+        if (isBlack) {
+            if (count1 >= 14 && count2 <= 20) {
+                return "c";
+            } else if (count1 <= 11 && count2 >= 23) {
+                return "s";
+            }
         } else {
-            return new Dimension(img.getWidth(null), img.getHeight(null));
-        }
-    }
-
-    public static void main(String[] args) {
-        JFrame f = new JFrame("Load Image Sample");
-
-        f.addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
+            if (count1 <= 13 && count2 >= 26) {
+                return "h";
+            } else if (count1 >= 3 && count2 <= 27) {
+                return "d";
             }
-        });
-
-        f.add(new LoadImageApp());
-        f.pack();
-        f.setVisible(true);
-    }
-}
-class LoadImageApplet extends Applet {
-    private BufferedImage img;
-
-    public void init() {
-        try {
-            URL url = new URL(getCodeBase(), "examples/strawberry.jpg");
-            img = ImageIO.read(url);
-        } catch (IOException e) {
         }
+
+        return result;
     }
 
-    public void paint(Graphics g) {
-        g.drawImage(img, 50, 50, null);
+    private boolean isRGBPixels(BufferedImage img, int x, int y) {
+        boolean result = false;
+        Color c = new Color(img.getRGB(x, y));
+        int red = c.getRed();
+        int green = c.getGreen();
+        int blue = c.getBlue();
+        if (!((red == 255 && green == 255 && blue == 255) || (red == 120 && green == 120 && blue == 120))) {
+            result = true;
+        }
+        return result;
     }
 }
